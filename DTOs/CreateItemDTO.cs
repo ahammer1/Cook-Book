@@ -11,5 +11,7 @@ namespace Recipe.DTOs
         public string Image { get; set; }
 
         public User User { get; set; }
+
+        public List<IngredientDTO> Ingredients { get; set; }
     }
 }

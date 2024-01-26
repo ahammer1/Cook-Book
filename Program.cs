@@ -69,19 +69,30 @@ app.MapGet("/api/item/{id}", (RecipeDbContext db, int id) =>
 });
 
 // Create Item
-app.MapPost("/api/item", (RecipeDbContext db, CreateItemDTO itemDTO) =>
+app.MapPost("/api/items", (RecipeDbContext db, CreateItemDTO itemDTO) =>
 {
     try
     {
-
-        Item newItem = new Item
+        var newItem = new Item
         {
             Name = itemDTO.Name,
             Description = itemDTO.Description,
             Image = itemDTO.Image,
             Type = itemDTO.Type,
             User = itemDTO.User,
+            Ingredients = new List<Ingredients>()
         };
+
+        // Map ingredients from DTO to actual model
+        foreach (var ingredientDTO in itemDTO.Ingredients)
+        {
+            var ingredient = new Ingredients
+            {
+                Name = ingredientDTO.Name,
+                Quantity = ingredientDTO.Quantity
+            };
+            newItem.Ingredients.Add(ingredient);
+        }
 
         db.Items.Add(newItem);
         db.SaveChanges();
@@ -131,5 +142,7 @@ app.MapPut("/api/item/{id}", (RecipeDbContext db, int id, UpdateItemDTO itemDTO)
 
     return Results.NoContent();
 });
+
+
 
 app.Run();
