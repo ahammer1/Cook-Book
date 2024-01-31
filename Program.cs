@@ -48,6 +48,17 @@ if (app.Environment.IsDevelopment())
 
 app.MapControllers();
 
+//Get User
+app.MapGet("/api/users/{uid}", (RecipeDbContext db, string uid) =>
+{
+    User user = db.Users.FirstOrDefault(u => u.UID == uid);
+    if (user == null)
+    {
+        return Results.NoContent();
+    }
+    return Results.Ok(user);
+});
+
 //Get Recipe
 app.MapGet("/api/items", (RecipeDbContext db) =>
 {
