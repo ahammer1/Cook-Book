@@ -155,5 +155,57 @@ app.MapPut("/api/item/{id}", (RecipeDbContext db, int id, UpdateItemDTO itemDTO)
 });
 
 
+//Add comment to a category 
+app.MapPost("/api/categories/{categoryId}/comments", (RecipeDbContext db, CreateCategoryDTO categoryDTO, int itemId) =>
+{
+    var existingItem = db.Items.Find(itemId);
+    if (existingItem == null)
+    {
+        return Results.NotFound("Recipe not found");
+    }
+
+    Category newCategory = new Category
+    {
+        Name = categoryDTO.Name,
+        ItemId = itemId,
+    };
+
+    db.Category.Add(newCategory);
+    db.SaveChanges();
+
+    int id = newCategory.Id;
+
+    return Results.Created($"/api/comments/{id}", newCategory);
+});
+
+// get all cats 
+app.MapGet("/api/categories", (RecipeDbContext db) =>
+{
+    var categories = db.Category.ToList();
+
+    if (categories.Count == 0)
+    {
+        return Results.NoContent();
+    }
+
+    return Results.Ok(categories);
+});
+// delete cat 
+app.MapDelete("/api/categories/{id}", (RecipeDbContext db, int id) =>
+{
+    Category categoryToDelete = db.Category.FirstOrDefault(c => c.Id == id);
+
+    if (categoryToDelete == null)
+    {
+        return Results.NotFound();
+    }
+
+    db.Category.Remove(categoryToDelete);
+    db.SaveChanges();
+
+    return Results.NoContent();
+});
+
+
 
 app.Run();
