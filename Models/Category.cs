@@ -5,6 +5,8 @@
         public int Id { get; set; }
         public string Name { get; set; }
 
+        public int ItemId { get; set; }
+
         public ICollection<Item> Item { get; set; }
     }
 }
